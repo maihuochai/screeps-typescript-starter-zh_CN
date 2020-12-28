@@ -13,29 +13,29 @@ export const roleBuilder = {
   run(creep: Creep): void {
     // 如果当前 creep 正在建造但是没有能量了，则让此 creep 去采集能量
     if (creep.memory.building && creep.store[RESOURCE_ENERGY] === 0) {
-      creep.memory.building = false;
-      creep.say("🔄 采集");
+      creep.memory.building = false
+      creep.say("🔄 采集")
     }
 
     // 如果当前 creep 不处于建造模式，并且能量已经存满，则让此 creep 去建造
     if (!creep.memory.building && creep.store.getFreeCapacity() === 0) {
-      creep.memory.building = true;
-      creep.say("🚧 建造");
+      creep.memory.building = true
+      creep.say("🚧 建造")
     }
 
     if (creep.memory.building) {
       // 在 creep 所在房间中找到所有的建筑工地
-      const targets = creep.room.find(FIND_CONSTRUCTION_SITES);
+      const targets = creep.room.find(FIND_CONSTRUCTION_SITES)
       if (targets.length) {
         if (creep.build(targets[0]) === ERR_NOT_IN_RANGE) {
-          creep.moveTo(targets[0], { visualizePathStyle: { stroke: "#ffffff" } });
+          creep.moveTo(targets[0], { visualizePathStyle: { stroke: "#ffffff" } })
         }
       }
     } else {
-      const sources = creep.room.find(FIND_SOURCES);
+      const sources = creep.room.find(FIND_SOURCES)
       if (creep.harvest(sources[0]) === ERR_NOT_IN_RANGE) {
-        creep.moveTo(sources[0], { visualizePathStyle: { stroke: "#ffaa00" } });
+        creep.moveTo(sources[0], { visualizePathStyle: { stroke: "#ffaa00" } })
       }
     }
   }
-};
+}
