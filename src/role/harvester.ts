@@ -1,4 +1,4 @@
-import { roleBuilder } from "./builder"
+import { roleBuilder } from './builder'
 /**
  * 采集者。
  *
@@ -10,7 +10,7 @@ import { roleBuilder } from "./builder"
  *
  * creep 会移动到能量点（source）并采集能量。creep 携带能量达到上限时，让它返回出生点（spawn）。
  */
-export const roleHarvester = {
+export default {
   run(creep: Creep): void {
     const targets = creep.room.find(FIND_STRUCTURES, {
       filter: (structure: AnyStructure) => {
@@ -26,11 +26,11 @@ export const roleHarvester = {
       if (creep.store.getFreeCapacity() > 0) {
         const sources = creep.room.find(FIND_SOURCES)
         if (creep.harvest(sources[0]) === ERR_NOT_IN_RANGE) {
-          creep.moveTo(sources[0], { visualizePathStyle: { stroke: "#ffaa00" } })
+          creep.moveTo(sources[0], { visualizePathStyle: { stroke: '#ffaa00' } })
         }
       } else {
         if (creep.transfer(targets[0], RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
-          creep.moveTo(targets[0], { visualizePathStyle: { stroke: "#ffffff" } })
+          creep.moveTo(targets[0], { visualizePathStyle: { stroke: '#ffffff' } })
         }
       }
     } else {

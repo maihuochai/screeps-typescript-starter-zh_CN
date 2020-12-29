@@ -2,6 +2,14 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
+var Role;
+(function (Role) {
+    Role["Harvester"] = "Harvester";
+    Role["Upgrader"] = "Upgrader";
+    Role["Builder"] = "Builder";
+    Role["Maintainer"] = "Maintainer";
+})(Role || (Role = {}));
+
 function getRandomFreePos(startPos, distance) {
     let x;
     let y;
@@ -31,13 +39,15 @@ function run(spawn) {
         workerBody.length + bodyIteration.length <= MAX_CREEP_SIZE) {
         workerBody = workerBody.concat(bodyIteration);
     }
-    spawn.spawnCreep(workerBody, `u1`, { memory: { role: "upgrader" } });
-    spawn.spawnCreep(workerBody, `u2`, { memory: { role: "upgrader" } });
+    spawn.spawnCreep(workerBody, `u1`, { memory: { role: Role.Upgrader } });
+    spawn.spawnCreep(workerBody, `u2`, { memory: { role: Role.Upgrader } });
     if (spawn.room.find(FIND_CONSTRUCTION_SITES).length > 0) {
-        spawn.spawnCreep(workerBody, `b1`, { memory: { role: "builder" } });
+        spawn.spawnCreep(workerBody, `b1`, { memory: { role: Role.Builder } });
     }
-    spawn.spawnCreep(workerBody, `h1`, { memory: { role: "harvester" } });
-    spawn.spawnCreep(workerBody, `h2`, { memory: { role: "harvester" } });
+    spawn.spawnCreep(workerBody, `h1`, { memory: { role: Role.Harvester } });
+    spawn.spawnCreep(workerBody, `h2`, { memory: { role: Role.Harvester } });
+    spawn.spawnCreep(workerBody, `ma1`, { memory: { role: Role.Maintainer } });
+    spawn.spawnCreep(workerBody, `ma2`, { memory: { role: Role.Maintainer } });
 }
 
 function run$1(tower) {
@@ -69,26 +79,26 @@ const roleBuilder = {
         // 如果当前 creep 正在建造但是没有能量了，则让此 creep 去采集能量
         if (creep.memory.building && creep.store[RESOURCE_ENERGY] === 0) {
             creep.memory.building = false;
-            creep.say("🔄 采集");
+            creep.say('🔄 采集');
         }
         // 如果当前 creep 不处于建造模式，并且能量已经存满，则让此 creep 去建造
         if (!creep.memory.building && creep.store.getFreeCapacity() === 0) {
             creep.memory.building = true;
-            creep.say("🚧 建造");
+            creep.say('🚧 建造');
         }
         if (creep.memory.building) {
             // 在 creep 所在房间中找到所有的建筑工地
             const targets = creep.room.find(FIND_CONSTRUCTION_SITES);
             if (targets.length) {
                 if (creep.build(targets[0]) === ERR_NOT_IN_RANGE) {
-                    creep.moveTo(targets[0], { visualizePathStyle: { stroke: "#ffffff" } });
+                    creep.moveTo(targets[0], { visualizePathStyle: { stroke: '#ffffff' } });
                 }
             }
         }
         else {
             const sources = creep.room.find(FIND_SOURCES);
             if (creep.harvest(sources[0]) === ERR_NOT_IN_RANGE) {
-                creep.moveTo(sources[0], { visualizePathStyle: { stroke: "#ffaa00" } });
+                creep.moveTo(sources[0], { visualizePathStyle: { stroke: '#ffaa00' } });
             }
         }
     }
@@ -105,7 +115,7 @@ const roleBuilder = {
  *
  * creep 会移动到能量点（source）并采集能量。creep 携带能量达到上限时，让它返回出生点（spawn）。
  */
-const roleHarvester = {
+var Harvester = {
     run(creep) {
         const targets = creep.room.find(FIND_STRUCTURES, {
             filter: (structure) => {
@@ -119,12 +129,12 @@ const roleHarvester = {
             if (creep.store.getFreeCapacity() > 0) {
                 const sources = creep.room.find(FIND_SOURCES);
                 if (creep.harvest(sources[0]) === ERR_NOT_IN_RANGE) {
-                    creep.moveTo(sources[0], { visualizePathStyle: { stroke: "#ffaa00" } });
+                    creep.moveTo(sources[0], { visualizePathStyle: { stroke: '#ffaa00' } });
                 }
             }
             else {
                 if (creep.transfer(targets[0], RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
-                    creep.moveTo(targets[0], { visualizePathStyle: { stroke: "#ffffff" } });
+                    creep.moveTo(targets[0], { visualizePathStyle: { stroke: '#ffffff' } });
                 }
             }
         }
@@ -150,26 +160,63 @@ const roleUpgrader = {
         // 如果当前 creep 正在升级但是没有能量了，则让此 creep 去采集能量
         if (creep.memory.upgrading && creep.store[RESOURCE_ENERGY] === 0) {
             creep.memory.upgrading = false;
-            creep.say("🔄 采集");
+            creep.say('🔄 采集');
         }
         // 如果当前 creep 不处于升级模式，并且能量已经存满，则让此 creep 去升级
         if (!creep.memory.upgrading && creep.store.getFreeCapacity() === 0) {
             creep.memory.upgrading = true;
-            creep.say("⚡ 升级");
+            creep.say('⚡ 升级');
         }
         if (creep.memory.upgrading) {
             if (creep.room.controller == null) {
-                console.log("房间 %s 中没有控制器", creep.room.name);
+                console.log('房间 %s 中没有控制器', creep.room.name);
             }
             else if (creep.upgradeController(creep.room.controller) === ERR_NOT_IN_RANGE) {
-                creep.moveTo(creep.room.controller, { visualizePathStyle: { stroke: "#ffffff" } });
+                creep.moveTo(creep.room.controller, { visualizePathStyle: { stroke: '#ffffff' } });
             }
         }
         else {
             const sources = creep.room.find(FIND_SOURCES);
             if (creep.harvest(sources[0]) === ERR_NOT_IN_RANGE) {
-                creep.moveTo(sources[0], { visualizePathStyle: { stroke: "#ffaa00" } });
+                creep.moveTo(sources[0], { visualizePathStyle: { stroke: '#ffaa00' } });
             }
+        }
+    }
+};
+
+var maintainer = {
+    run(creep) {
+        const targets = creep.room.find(FIND_STRUCTURES, {
+            filter: (structure) => {
+                return ((structure.structureType === STRUCTURE_ROAD || structure.structureType === STRUCTURE_CONTAINER) &&
+                    structure.hits < structure.hitsMax);
+            }
+        });
+        if (targets.length > 0) {
+            // 如果当前 creep 正在建造但是没有能量了，则让此 creep 去采集能量
+            if (creep.memory.maintain && creep.store[RESOURCE_ENERGY] === 0) {
+                creep.memory.maintain = false;
+                creep.say('🔄 采集');
+            }
+            // 如果当前 creep 不处于建造模式，并且能量已经存满，则让此 creep 去建造
+            if (!creep.memory.maintain && creep.store.getFreeCapacity() === 0) {
+                creep.memory.maintain = true;
+                creep.say('🚧 维护');
+            }
+            if (creep.memory.maintain) {
+                if (creep.repair(targets[0]) === ERR_NOT_IN_RANGE) {
+                    creep.moveTo(targets[0], { visualizePathStyle: { stroke: '#ce1616' } });
+                }
+            }
+            else {
+                const sources = creep.room.find(FIND_SOURCES);
+                if (creep.harvest(sources[0]) === ERR_NOT_IN_RANGE) {
+                    creep.moveTo(sources[0], { visualizePathStyle: { stroke: '#ffaa00' } });
+                }
+            }
+        }
+        else {
+            Harvester.run(creep);
         }
     }
 };
@@ -183,21 +230,24 @@ const loop = function () {
     // 根据 screep 的角色分配不同的任务
     for (const name in Game.creeps) {
         const creep = Game.creeps[name];
-        if (creep.memory.role === "harvester") {
-            roleHarvester.run(creep);
+        if (creep.memory.role === Role.Harvester) {
+            Harvester.run(creep);
         }
-        if (creep.memory.role === "upgrader") {
+        if (creep.memory.role === Role.Upgrader) {
             roleUpgrader.run(creep);
         }
-        if (creep.memory.role === "builder") {
+        if (creep.memory.role === Role.Builder) {
             roleBuilder.run(creep);
+        }
+        if (creep.memory.role === Role.Maintainer) {
+            maintainer.run(creep);
         }
     }
     // 删除 Memory 中已经死亡的 creeps
     for (const name in Memory.creeps) {
         if (!(name in Game.creeps)) {
             delete Memory.creeps[name];
-            console.log("Clearing non-existing creep memory:", name);
+            console.log('Clearing non-existing creep memory:', name);
         }
     }
 };

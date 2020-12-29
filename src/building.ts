@@ -1,3 +1,5 @@
+import { Role } from './types/enum'
+
 function getRandomFreePos(startPos: RoomPosition, distance: number) {
   let x: number
   let y: number
@@ -37,13 +39,15 @@ function run(spawn: StructureSpawn): void {
     workerBody = workerBody.concat(bodyIteration)
   }
 
-  spawn.spawnCreep(workerBody, `u1`, { memory: { role: "upgrader" } })
-  spawn.spawnCreep(workerBody, `u2`, { memory: { role: "upgrader" } })
+  spawn.spawnCreep(workerBody, `u1`, { memory: { role: Role.Upgrader } })
+  spawn.spawnCreep(workerBody, `u2`, { memory: { role: Role.Upgrader } })
   if (spawn.room.find(FIND_CONSTRUCTION_SITES).length > 0) {
-    spawn.spawnCreep(workerBody, `b1`, { memory: { role: "builder" } })
+    spawn.spawnCreep(workerBody, `b1`, { memory: { role: Role.Builder } })
   }
-  spawn.spawnCreep(workerBody, `h1`, { memory: { role: "harvester" } })
-  spawn.spawnCreep(workerBody, `h2`, { memory: { role: "harvester" } })
+  spawn.spawnCreep(workerBody, `h1`, { memory: { role: Role.Harvester } })
+  spawn.spawnCreep(workerBody, `h2`, { memory: { role: Role.Harvester } })
+  spawn.spawnCreep(workerBody, `ma1`, { memory: { role: Role.Maintainer } })
+  spawn.spawnCreep(workerBody, `ma2`, { memory: { role: Role.Maintainer } })
 }
 
 export { run }

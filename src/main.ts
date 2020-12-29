@@ -1,9 +1,11 @@
-import * as building from "building"
-import * as tower from "tower"
+import * as building from 'building'
+import * as tower from 'tower'
 
-import { roleBuilder } from "role/builder"
-import { roleHarvester } from "role/harvester"
-import { roleUpgrader } from "role/upgrader"
+import { roleBuilder } from 'role/builder'
+import Harvester from 'role/harvester'
+import { roleUpgrader } from 'role/upgrader'
+import maintainer from 'role/maintainer'
+import { Role } from './types/enum'
 
 export const loop = function (): void {
   building.run(Game.spawns.Spawn1)
@@ -16,14 +18,17 @@ export const loop = function (): void {
   // 根据 screep 的角色分配不同的任务
   for (const name in Game.creeps) {
     const creep = Game.creeps[name]
-    if (creep.memory.role === "harvester") {
-      roleHarvester.run(creep)
+    if (creep.memory.role === Role.Harvester) {
+      Harvester.run(creep)
     }
-    if (creep.memory.role === "upgrader") {
+    if (creep.memory.role === Role.Upgrader) {
       roleUpgrader.run(creep)
     }
-    if (creep.memory.role === "builder") {
+    if (creep.memory.role === Role.Builder) {
       roleBuilder.run(creep)
+    }
+    if (creep.memory.role === Role.Maintainer) {
+      maintainer.run(creep)
     }
   }
 
@@ -31,7 +36,7 @@ export const loop = function (): void {
   for (const name in Memory.creeps) {
     if (!(name in Game.creeps)) {
       delete Memory.creeps[name]
-      console.log("Clearing non-existing creep memory:", name)
+      console.log('Clearing non-existing creep memory:', name)
     }
   }
 }
