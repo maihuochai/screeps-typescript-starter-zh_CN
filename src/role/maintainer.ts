@@ -4,8 +4,13 @@ export default {
   run(creep: Creep) {
     const targets = creep.room.find(FIND_STRUCTURES, {
       filter: (structure: AnyStructure) => {
+        if (structure.structureType === STRUCTURE_WALL) {
+          return structure.hits < 3000000
+        }
         return (
-          (structure.structureType === STRUCTURE_ROAD || structure.structureType === STRUCTURE_CONTAINER) &&
+          (structure.structureType === STRUCTURE_ROAD ||
+            structure.structureType === STRUCTURE_CONTAINER ||
+            structure.structureType === STRUCTURE_RAMPART) &&
           structure.hits < structure.hitsMax
         )
       }

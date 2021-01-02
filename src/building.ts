@@ -32,22 +32,26 @@ function run(spawn: StructureSpawn): void {
 
   let workerBody: BodyPartConstant[] = []
   const bodyIteration = [MOVE, MOVE, WORK, CARRY]
+  const creepNum = Object.keys(Game.creeps).length
   while (
-    calcBodyCost(workerBody) + calcBodyCost(bodyIteration) <= Game.spawns.Spawn1.room.energyAvailable &&
+    calcBodyCost(workerBody) + calcBodyCost(bodyIteration) <=
+      (creepNum > 5 ? spawn.room.energyCapacityAvailable : spawn.room.energyAvailable) &&
     workerBody.length + bodyIteration.length <= MAX_CREEP_SIZE
   ) {
     workerBody = workerBody.concat(bodyIteration)
+    console.log(workerBody)
   }
 
-  spawn.spawnCreep(workerBody, `u1`, { memory: { role: Role.Upgrader } })
   spawn.spawnCreep(workerBody, `u2`, { memory: { role: Role.Upgrader } })
+  spawn.spawnCreep(workerBody, `h2`, { memory: { role: Role.Harvester } })
+  spawn.spawnCreep(workerBody, `ma1`, { memory: { role: Role.Maintainer } })
+  spawn.spawnCreep(workerBody, `ma2`, { memory: { role: Role.Maintainer } })
+  spawn.spawnCreep(workerBody, `ma3`, { memory: { role: Role.Maintainer } })
+  spawn.spawnCreep(workerBody, `u1`, { memory: { role: Role.Upgrader } })
   if (spawn.room.find(FIND_CONSTRUCTION_SITES).length > 0) {
     spawn.spawnCreep(workerBody, `b1`, { memory: { role: Role.Builder } })
   }
   spawn.spawnCreep(workerBody, `h1`, { memory: { role: Role.Harvester } })
-  spawn.spawnCreep(workerBody, `h2`, { memory: { role: Role.Harvester } })
-  spawn.spawnCreep(workerBody, `ma1`, { memory: { role: Role.Maintainer } })
-  spawn.spawnCreep(workerBody, `ma2`, { memory: { role: Role.Maintainer } })
 }
 
 export { run }

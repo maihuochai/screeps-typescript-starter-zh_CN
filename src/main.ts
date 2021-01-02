@@ -30,6 +30,13 @@ export const loop = function (): void {
     if (creep.memory.role === Role.Maintainer) {
       maintainer.run(creep)
     }
+    if (creep.memory.role === Role.Guard) {
+      roleUpgrader.run(creep)
+      const hostility = Game.spawns.Spawn1.pos.findInRange(FIND_HOSTILE_CREEPS, 20000)
+      if (hostility && hostility.length > 0) {
+        creep.attack(hostility[0])
+      }
+    }
   }
 
   // 删除 Memory 中已经死亡的 creeps
